@@ -2,15 +2,15 @@
 
 [Back to the README](../README.md)
 
-Every number in this repository comes from a run that wrote its results to a file. The files and the scripts that produced them are in the private repository.
+Every result on this page comes from a run that wrote it to a file; the one estimate, the size of a thousand-hour archive, is marked as such. The files and the scripts that produced them are in the private repository.
 
 ## The test set
 
 25 questions, written after reading the transcripts:
 
 - **20 answerable**, each with the true line and its second written down beforehand.
-- **5 unanswerable**: the answer is in none of the recordings, so the only right reply is "not in the archive". Two of them are traps, close in wording to something that was said.
-- **3 access probes**: a CLIENT-A consultant asking about CLIENT-B's recording, which must return nothing from CLIENT-B.
+- **5 unanswerable**: the answer is in none of the recordings, so the only right reply is "not in the archive". Four of them are adjacent: they ask about something a speaker mentions, but the answer itself was never said.
+- **3 access probes**: a consultant asking about a recording of the other client, twice as CLIENT-A and once as CLIENT-B, which must return nothing from that recording.
 - **8 questions about time**, added once the archive held the same speaker at three dates.
 
 An answer counts as right when it gives the true answer and cites a line within 30 seconds of the true one.
@@ -23,7 +23,7 @@ An answer counts as right when it gives the true answer and cites a line within 
 | Right answer, cited within 30 s | 19 of 20 | 7 of 20 |
 | Wrongly refused | 0 of 20 | 8 of 20 |
 | Correctly refused | 5 of 5 | 3 of 5 |
-| Invented an answer | 0 | 2 (the two traps) |
+| Invented an answer | 0 | 2 (two of the four adjacent questions) |
 | Citations verified against the passages retrieved | 26 of 26 | 17 of 17 |
 | Access probes held | 3 of 3 | 3 of 3 |
 | Time questions | not run | 5 of 8 |
@@ -32,9 +32,9 @@ An answer counts as right when it gives the true answer and cites a line within 
 
 On 24 September the app chose the cheapest model for all 25 questions by itself. On 28 September the provider's credit was gone, and the archive answered by exact words only.
 
-The two runs are not like for like. Between them the archive grew from 47 to 203 passages and the transcription moved to the larger Whisper model. The drop from 19 to 7 therefore mixes two causes, and we do not split them.
+The two runs are not like for like. Between them the archive grew from 47 to 203 passages and the transcription moved to the larger Whisper model. The drop from 19 to 7 therefore mixes three changes: no model, more passages and a different transcription, and we do not split them.
 
-Without the model, 17 of 17 citations are verified by construction: the archive copies the passage itself, so it cannot cite something that was not retrieved. The cost of search by exact words is that a question worded differently from what was said is refused, which is where the 8 wrong refusals come from. The two traps get the nearest real quote instead of a refusal.
+Without the model, 17 of 17 citations are verified by construction: the archive copies the passage itself, so it cannot cite something that was not retrieved. The cost of search by exact words is that a question worded differently from what was said is refused, which is where the 8 wrong refusals come from. Two of the four adjacent questions got the nearest real quote instead of a refusal.
 
 ## Questions about time, without the model
 
@@ -57,7 +57,7 @@ Question S3: "Is there a cheap way to spot cancer before someone feels ill?" Wit
 
 ## Citations that play
 
-Every citation marker must open the right file at the right second. On the 47-passage index of 24 September, all 101 markers named a file that exists and a second inside it: none past the end of a file, no passage starting past the end of its file. This was not true before the citation clock was fixed: markers had been built on the clock of the whole talk instead of the clock of the file they name.
+Every citation marker must name a file that exists and a second inside it, or the play button has nothing to open. On the 47-passage index of 24 September, all 101 markers did: none past the end of a file, no passage starting past the end of its file. This was not true before the citation clock was fixed: markers had been built on the clock of the whole talk instead of the clock of the file they name.
 
 ## Transcription
 
@@ -74,4 +74,4 @@ TED's subtitles are edited for reading, so part of each difference is TED's edit
 
 ## What this test does not prove
 
-We wrote the questions after reading the transcripts. 203 passages is an easy search; a thousand hours would be about 108,000. Six English TED talks are not Synchrone meetings in French. The real test is a pilot on Synchrone's own recordings.
+We wrote the questions after reading the transcripts. 203 passages is an easy search; a thousand hours of recordings would hold between about 108,000 and 121,000 passages, an estimate from the density of our two archives. Six English TED talks are not Synchrone meetings in French. The real test is a pilot on Synchrone's own recordings.

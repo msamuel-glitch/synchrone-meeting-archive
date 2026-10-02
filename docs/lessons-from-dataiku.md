@@ -20,6 +20,6 @@ Ten things we hit while building L'archive on Dataiku DSS 15.0.1 (Dataiku Cloud)
 
 **8. The webapp cannot query the knowledge bank.** None of the 14 code environments on the instance has both Flask and LangChain. The webapp computes the same vectors itself, and we checked it returns the same top passage on 5 audited questions. At a thousand hours the index must serve the search, which needs one environment an administrator installs.
 
-**9. Container speed varies.** The same transcription ran at 0.70x real time on 17 September and 0.55x on 28 September, with two files at 0.30x. Transcription cost is quoted as a range, never as one number.
+**9. Container speed varies.** The same transcription code ran at 0.70x real time on 17 September, on the seven sample files, and at 0.55x on 28 September, on twenty new files, two of them at 0.30x. Different days and different audio, so the speed cannot be pinned to one number: transcription cost is quoted as a range.
 
 **10. The client library cannot create a webapp on this version.** `create_webapp` from `dataikuapi` is rejected by DSS 15.0.1 with "Required field 'name' is missing". The server assigns its own id, and deleting a webapp through the public API answers 405, so a webapp created by mistake cannot be removed. Our deploy script creates once and then overwrites in place.

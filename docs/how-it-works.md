@@ -12,13 +12,13 @@ A recording is dropped into a managed folder. For the demo, the archive holds si
 
 ## 1. It is cut into four-minute pieces
 
-The files given at the start were already cut into pieces of exactly 240 seconds, 16 kHz, stereo. Every later step depends on that shape, so new audio is cut to the same shape rather than teaching each step a second format. The preparation recipe decodes the audio and writes the pieces: 74.7 minutes of audio in 35.8 seconds. It only adds files and never overwrites one, so rerunning it cannot destroy a recording.
+The files given at the start were already cut into pieces of 240 seconds (240.04 s as measured), 16 kHz, stereo. Every later step depends on that shape, so new audio is cut to the same shape rather than teaching each step a second format. The preparation recipe decodes the audio and writes the pieces: 74.7 minutes of audio in 35.8 seconds. It only adds files and never overwrites one, so rerunning it cannot destroy a recording.
 
 A short piece also means the player never loads a two-hour file. A quote at minute 97 opens one four-minute piece at the right second.
 
 ## 2. Whisper writes down what was said
 
-Dataiku's built-in speech recognition recipe returns the text of a file and nothing else: no timestamps. An answer that cannot point to a second cannot be played, so transcription is a Python recipe written by hand around faster-whisper, running on CPU inside Dataiku with no outside provider and no credit to run out.
+Dataiku's built-in speech recognition recipe returns a file's path, its text and a comment: no timestamps. An answer that cannot point to a second cannot be played, so transcription is a Python recipe written by hand around faster-whisper, running on CPU inside Dataiku with no outside provider and no credit to run out.
 
 Each sentence is written with its file, its piece number and its start and end inside that piece. Its second within the whole talk is the piece offset, (piece number minus 1) x 240 seconds, plus its start in the piece.
 
@@ -38,7 +38,7 @@ The passages are then turned into vectors with text-embedding-3-small and writte
 
 ## 5. Someone asks, and the rules run first
 
-**Who is asking.** Nobody logs in to the archive. The server asks Dataiku whose browser session it is and gets the login and the groups; the browser cannot choose them. The group gives the role: consultant, partner or administrator. An administrator can view the archive as a consultant to check the rules, and the journal still records the real account.
+**Who is asking.** Nobody logs in to the archive. The server asks Dataiku whose browser session it is and gets the login and the groups; the browser cannot choose them. The group gives the role: consultant, partner or administrator. An administrator can view the archive as a consultant to check the rules, and the journal still records the real account. On the challenge instance the whole team shared one Dataiku account in one group, mapped to administrator, so the consultant and partner views were shown through "view as". In production the groups come from Synchrone's directory, one per client account.
 
 **What they may see.** The access rule runs on the server before the search. A passage outside the caller's clients is never scored, never ranked and never sent to a model. For a CLIENT-A consultant that removes 22 of the 203 passages; for CLIENT-B, 11. Filtering after the search would leave the best places filled with text that has to be thrown away, and one line of code between a consultant and another client's words.
 

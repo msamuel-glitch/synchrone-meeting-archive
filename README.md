@@ -10,7 +10,7 @@
 
 ![L'archive, for Synchrone](assets/cover.jpg)
 
-> **Ask a question, and the archive plays the sentence that answers it, from the second it was said. 19 of 20 test questions answered right to the second, at $0.0003 an answer.**
+> **Ask a question, and the archive plays the sentence that answers it, from the second it was said. 19 of 20 test questions answered correctly and cited within 30 seconds of the true line, at $0.0003 an answer.**
 
 ---
 
@@ -43,9 +43,9 @@ Each step in more detail, with the decisions behind it: **[docs/how-it-works.md]
 
 ## What sets it apart
 
-| | |
+| What | In practice |
 |---|---|
-| **You hear it** | Press play and the recording starts at the quoted second. Dataiku's own chat cites a file, never a second. |
+| **You hear it** | Press play and the recording starts at the quoted second. Dataiku's own chat cites a file by default, not a second. |
 | **Every quote is checked** | 26 of 26 citations matched the passages retrieved. A quote that matches nothing is shown in red and cannot be played. |
 | **Access runs before the search** | A recording you may not see is never scored, never ranked and never sent to a model. 0 leaks in 3 cross-client probes. |
 | **It kept answering without the model** | On 28 September the model provider's credit ran out for good. The archive switched to exact-word search and kept quoting the speakers' own sentences, labelled "sans modèle". |
@@ -67,14 +67,14 @@ Measured on a 25-question test set: 20 questions whose answer is in the recordin
 | Questions about time (latest, evolution, a named year) | not measured | 5 of 8 |
 | Cost and time per answer | $0.0003, 2.3 s | $0 |
 
-The archive grew between the two runs, so the drop mixes two causes: no model, and four times more passages.
+Three things changed between the two runs, so the drop mixes them: no model, four times more passages, and a larger Whisper model.
 
 | Pipeline measure | Value |
 |---|---|
 | Word error, Whisper large-v3 against TED's subtitles (11,021 words) | 5.5 % (2.1 %, 2.6 % and 6.8 % per talk) |
 | Transcription speed, CPU container, no GPU | 0.55x to 0.70x real time |
 | Audio preparation | 74.7 min of audio cut in 35.8 s |
-| Citation markers that open the right file at the right second | 101 of 101 |
+| Citation markers that name an existing file and a second inside it (47-passage index) | 101 of 101 |
 
 How each number was measured, and the failures we counted: **[docs/evaluation.md](docs/evaluation.md)**
 
@@ -84,13 +84,28 @@ How each number was measured, and the failures we counted: **[docs/evaluation.md
 
 The interface is in French. A consultant gets two screens, Demander (ask) and Experts; partners also get Pilotage (the access journal) and Mesures (the measurements).
 
-| | |
-|---|---|
-| ![An answer](assets/screens/hero.jpg) **An answer.** The passages that answer best, quoted as recorded, each with a play button, the speaker, the year and the second. | ![Which date](assets/screens/clarify.jpg) **Which date?** The subject was recorded in 2015 and 2020, so the archive asks which one you want before answering. |
-| ![What changed](assets/screens/timeline.jpg) **What changed.** The best passage of each recording, oldest to newest. | ![Another client's recording](assets/screens/wall.jpg) **Another client's recording.** Viewed as a CLIENT-A consultant, a question about CLIENT-B returns nothing: 22 passages were removed before the search. |
-| ![A summary of one speaker](assets/screens/summary.jpg) **What an expert said.** A summary by extracts: the speaker's own key sentences, year by year, each playable. | ![The map of the archive](assets/screens/map.jpg) **The map of the archive.** Our own meaning model, computed inside Dataiku with no external model, places the 203 passages and names 8 subjects. |
-| ![Sign-in](assets/screens/gate.jpg) **No password.** Dataiku says who is asking, and the group gives the role. Account hidden. | ![The access journal](assets/screens/journal.jpg) **The access journal.** Every question with its account, profile, what came back and what was withheld. Accounts hidden. |
-| ![An answer written by the model](assets/screens/llm.jpg) **Written by the model**, on 24 September, with one verified citation that plays. | ![The Dataiku Flow](assets/screens/flow.jpg) **The Dataiku Flow.** Recordings, transcription, segments, passages, embeddings and answers. |
+<table>
+<tr>
+<td width="50%" valign="top"><img src="assets/screens/hero.jpg" width="440" alt="An answer"><br><b>An answer.</b> The passages that answer best, quoted as recorded, each with a play button, the speaker, the year and the second.</td>
+<td width="50%" valign="top"><img src="assets/screens/clarify.jpg" width="440" alt="Which date"><br><b>Which date?</b> The subject was recorded in 2015 and 2020, so the archive asks which one you want before answering.</td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="assets/screens/timeline.jpg" width="440" alt="What changed"><br><b>What changed.</b> The best passage of each recording, oldest to newest.</td>
+<td width="50%" valign="top"><img src="assets/screens/wall.jpg" width="440" alt="Another client's recording"><br><b>Another client's recording.</b> Viewed as a CLIENT-A consultant, a question about CLIENT-B returns nothing: 22 passages were removed before the search.</td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="assets/screens/summary.jpg" width="440" alt="What an expert said"><br><b>What an expert said.</b> A summary by extracts: the speaker's own key sentences, year by year, each playable.</td>
+<td width="50%" valign="top"><img src="assets/screens/map.jpg" width="440" alt="The map of the archive"><br><b>The map of the archive.</b> Our own meaning model, computed inside Dataiku with no external model, places the 203 passages and names 8 subjects.</td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="assets/screens/gate.jpg" width="440" alt="No password"><br><b>No password.</b> Dataiku says who is asking, and the group gives the role. Account hidden.</td>
+<td width="50%" valign="top"><img src="assets/screens/journal.jpg" width="440" alt="The access journal"><br><b>The access journal.</b> Every question with its account, profile, what came back and what was withheld. Accounts hidden.</td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="assets/screens/llm.jpg" width="440" alt="Written by the model"><br><b>Written by the model</b>, on 24 September, with one verified citation that plays.</td>
+<td width="50%" valign="top"><img src="assets/screens/flow.jpg" width="440" alt="The Dataiku Flow"><br><b>The Dataiku Flow.</b> Recordings, transcription, segments, passages, embeddings and answers.</td>
+</tr>
+</table>
 
 ---
 
