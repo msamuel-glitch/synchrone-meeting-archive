@@ -6,11 +6,12 @@
 [![Python](https://img.shields.io/badge/Python-Flask%20%C2%B7%20numpy-3776AB?style=for-the-badge&logo=python)](docs/how-it-works.md)
 [![JavaScript](https://img.shields.io/badge/JavaScript-no%20framework-F7DF1E?style=for-the-badge&logo=javascript)](docs/how-it-works.md)
 [![Whisper](https://img.shields.io/badge/Speech-faster--whisper%20large--v3-412991?style=for-the-badge)](docs/evaluation.md)
-[![Albert School](https://img.shields.io/badge/Albert%20School-x%20Synchrone-FF0058?style=for-the-badge)](https://albert-school.fr)
+[![Albert School](https://img.shields.io/badge/Albert%20School-x%20Synchrone-FF0058?style=for-the-badge)](https://albertschool.com)
 
 ![L'archive, for Synchrone](assets/cover.jpg)
+*Concept image. The real screens, in French, are further down.*
 
-> **Ask a question, and the archive plays the sentence that answers it, from the second it was said. 19 of 20 test questions answered correctly and cited within 30 seconds of the true line, at $0.0003 an answer.**
+> **Ask a question, and the archive plays the recording from the passage that answers it, within about 30 seconds of the line. With a model connected (24 September, 47 passages), 19 of 20 test questions were answered correctly and cited within 30 seconds of the true line, at $0.0003 an answer.**
 
 ---
 
@@ -18,7 +19,7 @@
 
 Synchrone is a French engineering consultancy of about 1,500 people. Much of what its consultants know is said in meetings, trainings and handovers, and leaves with them. The challenge asked for a way to question a thousand hours of recordings and get back the right minute.
 
-L'archive does it inside the Dataiku that Synchrone already runs. A consultant asks in plain words. The archive answers with what was actually said, shows who said it and when, and plays the recording from that exact second. A consultant only ever searches the recordings of the clients they work for, and every question is written to an audit journal.
+L'archive does it inside the Dataiku that Synchrone already runs. A consultant asks in plain words. The archive answers with what was actually said, shows who said it and when, and plays the recording from the block of about 30 seconds that holds it. A consultant only ever searches the recordings of the clients they work for, and every question is written to an audit journal.
 
 At the second jury review, the jury singled out two things: the access control and the interface.
 
@@ -30,12 +31,12 @@ At the second jury review, the jury singled out two things: the access control a
 
 0. **The recording goes in.** The file is dropped into a folder in Dataiku. The demo archive holds six TED talks, 1 h 41 min in total. Only the sound is used.
 1. **It is cut into four-minute pieces.** 75 minutes of audio is cut in 36 seconds. Because the pieces are short, the player never has to load a two-hour file.
-2. **Whisper writes down what was said.** Speech recognition runs inside Dataiku, with no outside provider. Every sentence keeps the second it was said. 5.5 % of words differ from TED's human subtitles on the three Bill Gates talks.
-3. **Sentences become passages.** Neighbouring sentences are joined into 203 passages. Each line inside a passage keeps its own file and second, so a quote points at the right place even when its passage crosses a four-minute cut, as 21 of them do.
+2. **Whisper writes down what was said.** Speech recognition runs inside Dataiku, with no outside provider. Whisper returns blocks of about 30 seconds, and every block keeps the second it starts. 5.5 % of words differ from TED's human subtitles on the three Bill Gates talks.
+3. **Blocks become passages.** Neighbouring blocks are joined into 203 passages. Each block inside a passage keeps its own file and second, so a quote points at the right place even when its passage crosses a four-minute cut, as 21 of them do.
 4. **Each passage is labelled and stored.** It gets its client, its mission and the real date of the recording, then goes into Dataiku's knowledge bank so it can be found by meaning.
 5. **Someone asks, and the rules run first.** Dataiku says who is asking, so there is no separate login. Recordings of clients they do not work on are removed before anything is searched: a CLIENT-A consultant searches 181 of the 203 passages. Then time: ask for the latest and newer passages weigh more; if a subject was recorded on several dates, the archive asks which one you want.
 6. **The search.** By meaning and by exact words, the two lists combined by rank.
-7. **The answer is written and checked.** The cheapest model writes the answer by quoting a line. Every quote is matched against the passages actually found: a checked one gets a play button that starts the recording at that second, an invented one shows in red and cannot play. If nothing in the archive answers, it says so. Every question goes to the journal: who asked, what came back, and what was withheld.
+7. **The answer is written and checked.** The cheapest model writes the answer by quoting a line with its marker. Every marker is matched against the passages actually found: a matched one gets a play button that starts the recording at that block, one that matches nothing shows in red and cannot play. The check proves where a quote points, not that the answer is right. If nothing in the archive answers, it says so. Every question goes to the journal: who asked, what came back, and what was withheld.
 
 Each step in more detail, with the decisions behind it: **[docs/how-it-works.md](docs/how-it-works.md)**
 
@@ -45,9 +46,9 @@ Each step in more detail, with the decisions behind it: **[docs/how-it-works.md]
 
 | What | In practice |
 |---|---|
-| **You hear it** | Press play and the recording starts at the quoted second. Dataiku's own chat cites a file by default, not a second. |
-| **Every quote is checked** | 26 of 26 citations matched the passages retrieved. A quote that matches nothing is shown in red and cannot be played. |
-| **Access runs before the search** | A recording you may not see is never scored, never ranked and never sent to a model. 0 leaks in 3 cross-client probes. |
+| **You hear it** | Press play and the recording starts at the block that holds the quote, within about 30 seconds of the line. Dataiku's own chat cites a file by default, not a second. |
+| **Every citation is checked** | On 24 September, 26 of 26 citation markers matched a passage the search had retrieved. A marker that matches nothing is shown in red and cannot be played. The check proves where a quote points, not that the answer is right. |
+| **Access runs before the search** | A recording you may not see is never scored, never ranked and never sent to a model. 0 leaks in 3 cross-client probes of the search. In the challenge version the audio and transcript routes did not yet check the client: see [the known limits](docs/evaluation.md#known-limits). |
 | **It kept answering without the model** | On 28 September the model provider's credit ran out for good. The archive switched to exact-word search and kept quoting the speakers' own sentences, labelled "sans modèle". |
 | **Inside the Dataiku Synchrone already pays for** | Every step is a recipe or a dataset an engineer can open and rerun. No new platform to buy or secure. |
 
@@ -55,17 +56,19 @@ Each step in more detail, with the decisions behind it: **[docs/how-it-works.md]
 
 ## Key results
 
-Measured on a 25-question test set: 20 questions whose answer is in the recordings, 5 whose answer is not, and 3 attempts to reach another client's recording.
+Measured on a 25-question test set (20 questions whose answer is in the recordings, 5 whose answer is not), plus 3 attempts to reach another client's recording and, on 28 September, 8 questions about time.
 
 | Measure | With the model (24 Sep) | Without it (28 Sep) |
 |---|---|---|
 | Archive searched | 3 talks, 47 passages | 6 talks, 203 passages |
 | Right answer, cited within 30 s of the true line | **19 of 20** | 7 of 20 |
-| Citations verified against the passages retrieved | **26 of 26** | 17 of 17 |
+| Answered, but missed the line or the point | 1 of 20 | 5 of 20 |
+| Wrongly refused | 0 of 20 | 8 of 20 |
+| Citation markers matching a retrieved passage | **26 of 26** | 17 of 17 |
 | "Not in the archive" when it is not | **5 of 5** | 3 of 5 |
 | Leaks between clients | **0 of 3** | 0 of 3 |
 | Questions about time (latest, evolution, a named year) | not measured | 5 of 8 |
-| Cost and time per answer | $0.0003, 2.3 s | $0 |
+| Cost per answer, and time of the model call | $0.0003, 2.3 s | $0 |
 
 Three things changed between the two runs, so the drop mixes them: no model, four times more passages, and a larger Whisper model.
 
@@ -114,7 +117,7 @@ The interface is in French. A consultant gets two screens, Demander (ask) and Ex
 - **Platform:** Dataiku DSS 15 (Dataiku Cloud): Python recipes, managed folders, datasets, a knowledge bank, the LLM Mesh
 - **Speech:** faster-whisper 1.2.1 with the large-v3 model, int8, on CPU; PyAV for decoding
 - **Search:** text-embedding-3-small for meaning, a keyword search (BM25) written by hand, the two fused by rank
-- **Answer:** gpt-5.6-luna through the LLM Mesh, the cheapest of the three models on the instance, chosen for all 25 test questions
+- **Answer:** gpt-5.6-luna through the LLM Mesh, the cheapest of the three models on the instance, chosen for all 25 test questions, until the provider's credit ran out on 28 September
 - **Own meaning model:** latent semantic analysis in numpy, 16 dimensions, computed when the app starts
 - **App:** a Dataiku webapp with a Flask backend (1,890 lines of Python) and a plain HTML, CSS and JavaScript front end (1,202 lines of JavaScript, no framework); audio streamed from the managed folder with byte ranges so the player can jump to any second
 - **Design:** a console design system from an earlier product, recoloured to Synchrone's navy and sand
@@ -142,7 +145,7 @@ The source code, the evaluation scripts, the Dataiku project export and the busi
 
 ## Rights
 
-© 2026 Mugisha Samuel. All rights reserved. This repository may be read; no licence is granted to copy, modify or reuse its text, pictures or design. The business case belongs to its authors in Team 6. The TED talks used as test material are © TED Conferences LLC, licensed CC BY-NC-ND 4.0, and are not redistributed here.
+© 2026 Mugisha Samuel. All rights reserved. This repository may be read, and viewed and forked as GitHub's Terms of Service allow; beyond that, no licence is granted to copy, modify or reuse its text, pictures or design. The business case belongs to its authors in Team 6. The TED talks used as test material are © TED Conferences LLC, licensed CC BY-NC-ND 4.0, and are not redistributed here.
 
 ---
 
