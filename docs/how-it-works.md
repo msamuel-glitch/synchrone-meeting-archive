@@ -24,11 +24,11 @@ Whisper runs in batched mode, which returns blocks of up to 30 seconds (median 2
 
 Accuracy, measured against TED's human subtitles on the three Gates talks: 5.5 % of 11,021 words differ. The subtitles are edited for reading, so part of that difference is TED's edit, and the figure is an upper bound.
 
-## 3. Sentences become passages
+## 3. Blocks become passages
 
 One block is too short to stand as an answer; a whole file is too long to point at. Neighbouring blocks are joined until a passage can stand on its own: 203 passages for 1 h 41 min.
 
-21 passages cross a four-minute cut. A passage cited at its start would send the reader to the wrong file for every line after the cut. So every block inside a passage carries its own marker, for example `[seg02 00:00]`, on the clock of the file it names, and the model must cite the block it quotes. A citation is as precise as a block of about 30 seconds, not as a passage of about a minute. Word timestamps would make it as precise as a sentence; they were not switched on.
+21 passages cross a four-minute cut. A passage cited at its start would send the reader to the wrong file for every block after the cut. So every block inside a passage carries its own marker, for example `[seg02 00:00]`, on the clock of the file it names, and the model must cite the block it quotes. A citation is as precise as a block of about 30 seconds, not as a passage of about a minute. Word timestamps would make it as precise as a sentence; they were not switched on.
 
 ## 4. Each passage is labelled and stored
 

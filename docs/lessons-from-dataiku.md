@@ -8,15 +8,15 @@ Ten things we hit while building L'archive on Dataiku DSS 15.0.1 (Dataiku Cloud)
 
 **2. The shared code environment installs the wrong "whisper".** It requests a package called `whisper`, which installs version 1.1.10 of Graphite's time-series database, not speech recognition. The real speech model lives in two other environments, with `faster-whisper==1.2.1`.
 
-**3. The built-in speech recipe has no timestamps.** Dataiku's Speech Recognition recipe returns the path, the text and a comment, from `.wav` files only. Without the second a sentence was said, an answer cannot be played, so transcription is a Python recipe written by hand.
+**3. The built-in speech recipe has no timestamps.** Dataiku's Speech Recognition recipe returns the path, the text and a comment, from `.wav` files only. Without the second a passage was said, an answer cannot be played, so transcription is a Python recipe written by hand.
 
 **4. Vectors written through one handle disappear.** Writing to a knowledge bank through `as_langchain_vectorstore()` looks like it works: the write succeeds and a search in the same run finds the passages. Then the container ends and the vectors are gone, because that handle is a local copy. The next step searched an empty store, keyword search carried the answers, and nothing looked broken. Writes now go through `kb.get_writer()`, whose files upload when the block closes, and the recipe checks hit counts after writing.
 
 **5. The local vector store cannot do hybrid search.** `hybrid_search()` raises `NotImplementedError` on local Chroma. Its metadata filters do work (equal, not equal, ranges, in, and, or), which is what the access rule needs. The keyword search (BM25) is written by hand.
 
-**6. Citations have to be per line.** A passage that crosses a four-minute cut, cited at its start, points into the wrong file for every line after the cut. Each line now carries its own marker on the clock of the file it names.
+**6. Citations have to be per block.** A passage that crosses a four-minute cut, cited at its start, points into the wrong file for every block after the cut. Each Whisper block of about 30 seconds now carries its own marker on the clock of the file it names.
 
-**7. A fused score cannot decide a refusal.** The rank-fused score is bounded, and in testing it put an unanswerable question above an answerable one. The raw distance in meaning separates them: 0.66 to 1.09 for answerable questions, 1.65 for an unanswerable one.
+**7. A fused score cannot decide a refusal.** The rank-fused score is bounded, and in testing it put an unanswerable question above an answerable one. The raw distance in meaning looked separable on five early questions, 0.66 to 1.09 for answerable ones and 1.65 for an unanswerable one, but five points cannot set a threshold, so the refusal comes from the instruction given to the model.
 
 **8. The webapp cannot query the knowledge bank.** Of the 14 code environments on the instance, only one, managed by a plugin, lists both Flask and LangChain, and the webapp was not tested on it. The webapp computes the same vectors itself, and we checked it returns the same top passage on 7 audited questions. At a thousand hours the index must serve the search, which needs one environment an administrator installs.
 

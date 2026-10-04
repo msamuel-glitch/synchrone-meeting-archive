@@ -28,7 +28,7 @@ An answer counts as right when it gives the true answer and cites a line within 
 | Wrongly refused | 0 of 20 | 8 of 20 |
 | Correctly refused | 5 of 5 | 3 of 5 |
 | Invented an answer | 0 | 2 (two of the four adjacent questions) |
-| Citations verified against the passages retrieved | 26 of 26 | 17 of 17 |
+| Citation markers matching a retrieved passage | 26 of 26 | 17 of 17 |
 | Access probes held | 3 of 3 | 3 of 3 |
 | Time questions | not run | 5 of 8 |
 | Mean cost per answer | $0.000301 (all 25: $0.0075) | $0 |
@@ -74,7 +74,7 @@ Every citation marker must name a file that exists and a second inside it, or th
 | Speed on a CPU container, two full runs | 0.70x then 0.55x real time |
 | Audio preparation, 74.7 minutes | 35.8 s |
 
-TED's subtitles are edited for reading, so part of each difference is TED's edit, and the error rates are an upper bound. Container speed changed between days and within a run (the first two files of the 28 September run went at 0.30x), so transcription cost is quoted as a range.
+TED's subtitles are edited for reading, so part of each difference is TED's edit, and the error rates are an upper bound. Container speed changed between days and within a run (the first two files of the 28 September run went at 0.34x and 0.30x), so transcription cost is quoted as a range.
 
 ## Known limits
 
