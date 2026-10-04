@@ -6,7 +6,7 @@ Ten things we hit while building L'archive on Dataiku DSS 15.0.1 (Dataiku Cloud)
 
 **1. A failed model call arrives as a success.** The LLM Mesh answers HTTP 200 even when the provider refused the call; the real status is a flag inside each response. When the provider's credit ran out, every call still said 200. Our code reads the per-call flag, so the failure was reported as a failure rather than shown as an empty answer, and a circuit breaker stopped calling a dead model.
 
-**2. The shared code environment installs the wrong "whisper".** It pins `whisper==1.1.10`, which is Graphite's time-series database, not speech recognition. The real speech model lives in two other environments, with `faster-whisper==1.2.1`.
+**2. The shared code environment installs the wrong "whisper".** It requests a package called `whisper`, which installs version 1.1.10 of Graphite's time-series database, not speech recognition. The real speech model lives in two other environments, with `faster-whisper==1.2.1`.
 
 **3. The built-in speech recipe has no timestamps.** Dataiku's Speech Recognition recipe returns the path, the text and a comment, from `.wav` files only. Without the second a sentence was said, an answer cannot be played, so transcription is a Python recipe written by hand.
 
@@ -18,8 +18,8 @@ Ten things we hit while building L'archive on Dataiku DSS 15.0.1 (Dataiku Cloud)
 
 **7. A fused score cannot decide a refusal.** The rank-fused score is bounded, and in testing it put an unanswerable question above an answerable one. The raw distance in meaning separates them: 0.66 to 1.09 for answerable questions, 1.65 for an unanswerable one.
 
-**8. The webapp cannot query the knowledge bank.** None of the 14 code environments on the instance has both Flask and LangChain. The webapp computes the same vectors itself, and we checked it returns the same top passage on 5 audited questions. At a thousand hours the index must serve the search, which needs one environment an administrator installs.
+**8. The webapp cannot query the knowledge bank.** Of the 14 code environments on the instance, only one, managed by a plugin, lists both Flask and LangChain, and the webapp was not tested on it. The webapp computes the same vectors itself, and we checked it returns the same top passage on 7 audited questions. At a thousand hours the index must serve the search, which needs one environment an administrator installs.
 
-**9. Container speed varies.** The same transcription code ran at 0.70x real time on 17 September, on the seven sample files, and at 0.55x on 28 September, on twenty new files, two of them at 0.30x. Different days and different audio, so the speed cannot be pinned to one number: transcription cost is quoted as a range.
+**9. Container speed varies.** The same transcription code ran at 0.70x real time on 17 September, on the seven sample files, and at 0.55x on 28 September, on twenty new files, two of them at 0.34x and 0.30x. Different days and different audio, so the speed cannot be pinned to one number: transcription cost is quoted as a range.
 
 **10. The client library cannot create a webapp on this version.** `create_webapp` from `dataikuapi` is rejected by DSS 15.0.1 with "Required field 'name' is missing". The server assigns its own id, and deleting a webapp through the public API answers 405, so a webapp created by mistake cannot be removed. Our deploy script creates once and then overwrites in place.

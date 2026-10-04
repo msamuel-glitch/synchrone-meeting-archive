@@ -20,15 +20,15 @@ A short piece also means the player never loads a two-hour file. A quote at minu
 
 Dataiku's built-in speech recognition recipe returns a file's path, its text and a comment: no timestamps. An answer that cannot point to a second cannot be played, so transcription is a Python recipe written by hand around faster-whisper, running on CPU inside Dataiku with no outside provider and no credit to run out.
 
-Each sentence is written with its file, its piece number and its start and end inside that piece. Its second within the whole talk is the piece offset, (piece number minus 1) x 240 seconds, plus its start in the piece.
+Whisper runs in batched mode, which returns blocks of up to 30 seconds (median 28 s, about 66 words) rather than single sentences. Each block is written with its file, its piece number and its start and end inside that piece. Its second within the whole talk is the piece offset, (piece number minus 1) x 240 seconds, plus its start in the piece.
 
 Accuracy, measured against TED's human subtitles on the three Gates talks: 5.5 % of 11,021 words differ. The subtitles are edited for reading, so part of that difference is TED's edit, and the figure is an upper bound.
 
 ## 3. Sentences become passages
 
-One sentence is too short to answer a question; a whole file is too long to point at. Neighbouring sentences are joined until a passage can stand on its own: 203 passages for 1 h 41 min.
+One block is too short to stand as an answer; a whole file is too long to point at. Neighbouring blocks are joined until a passage can stand on its own: 203 passages for 1 h 41 min.
 
-21 passages cross a four-minute cut. A passage cited at its start would send the reader to the wrong file for every line after the cut. So every line inside a passage carries its own marker, for example `[seg02 00:00]`, on the clock of the file it names, and the model must cite the line it quotes. A citation is as precise as a sentence, not as a passage.
+21 passages cross a four-minute cut. A passage cited at its start would send the reader to the wrong file for every line after the cut. So every block inside a passage carries its own marker, for example `[seg02 00:00]`, on the clock of the file it names, and the model must cite the block it quotes. A citation is as precise as a block of about 30 seconds, not as a passage of about a minute. Word timestamps would make it as precise as a sentence; they were not switched on.
 
 ## 4. Each passage is labelled and stored
 
@@ -38,7 +38,7 @@ The passages are then turned into vectors with text-embedding-3-small and writte
 
 ## 5. Someone asks, and the rules run first
 
-**Who is asking.** Nobody logs in to the archive. The server asks Dataiku whose browser session it is and gets the login and the groups; the browser cannot choose them. The group gives the role: consultant, partner or administrator. An administrator can view the archive as a consultant to check the rules, and the journal still records the real account. On the challenge instance the whole team shared one Dataiku account in one group, mapped to administrator: its starting view covers both clients, and the two consultant views were reached through "view as". In production the groups come from Synchrone's directory, one per client account.
+**Who is asking.** Nobody logs in to the archive. The server asks Dataiku whose browser session it is and gets the login and the groups; the browser cannot choose them. The group gives the role: consultant, partner or administrator. An administrator can view the archive as a consultant to check the rules, and the journal still records the real account. On the challenge instance the whole team shared one Dataiku account in one group, mapped to administrator: its starting view covers both clients, and the two consultant views were reached through "view as". In production the groups come from Synchrone's directory, one per client account. Gaps in the challenge version are listed in [the known limits](evaluation.md#known-limits).
 
 **What they may see.** The access rule runs on the server before the search. A passage outside the caller's clients is never scored, never ranked and never sent to a model. For a CLIENT-A consultant that removes 22 of the 203 passages; for CLIENT-B, 11. Filtering after the search would leave the best places filled with text that has to be thrown away, and one line of code between a consultant and another client's words.
 
@@ -56,13 +56,13 @@ Two searches run on the allowed passages: one by meaning, comparing vectors, and
 
 ## 7. The answer is written and checked
 
-**Written.** The cheapest of the three models on the instance (gpt-5.6-luna) writes the answer by quoting lines, each with its marker. It was chosen for all 25 test questions; a route to a larger model for harder questions was built and never needed. An answer cost $0.0003 and took 2.3 seconds on average.
+**Written.** The cheapest of the three models on the instance (gpt-5.6-luna) writes the answer by quoting lines, each with its marker. It was chosen for all 25 test questions; a route to a larger model for harder questions was built and never needed. On 24 September an answer cost $0.0003 on average, and the model call took 2.3 seconds.
 
-**Checked.** Every marker in the answer is matched against the markers of the passages actually retrieved. A model can write any string; matching it to a real marker is what separates a citation from something that looks like one. A verified citation gets a play button. One that matches nothing is shown in red and cannot be played.
+**Checked.** Every marker in the answer is matched against the markers of the passages actually retrieved. A model can write any string; matching it to a real marker is what separates a citation from something that looks like one. A verified citation gets a play button. One that matches nothing is shown in red and cannot be played. The check proves where a quote points, not that the answer is right.
 
 **Heard.** The server streams the audio file straight out of the Dataiku folder with byte ranges, which is what lets the browser jump to a second, and sends the lines of that file with their times, so the text follows the voice.
 
-**Refused.** If nothing in the archive answers, the archive says so. With the model, the refusal is decided by how far the closest passage is in meaning: answerable questions measured 0.66 to 1.09, an unanswerable one 1.65. A rank-fused score cannot do this job, because it is bounded and put an unanswerable question above an answerable one.
+**Refused.** If nothing in the archive answers, the archive says so. With the model, the refusal comes from the instruction given to the model; no threshold decides it. The distance in meaning to the closest passage is recorded with every answer: on five early questions, answerable ones measured 0.66 to 1.09 and an unanswerable one 1.65, too few points to set a threshold on. A rank-fused score cannot do this job, because it is bounded and put an unanswerable question above an answerable one.
 
 **Logged.** Every question and every reader's vote is written to a Dataiku folder, one file per event: who asked, under which profile, what came back, what the rule withheld, which model answered and what it cost.
 
